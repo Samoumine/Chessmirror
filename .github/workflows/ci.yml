@@ -1,0 +1,17 @@
+name: CI                          # the label shown in GitHub's Actions tab
+
+on:                               # WHEN the workflow runs
+  push:                           # [1] the event for "commits were uploaded"
+    branches: [main]
+  pull_request:                   # also on every pull request, before merging
+
+jobs:
+  test:                           # one job, named "test"
+    runs-on: ubuntu-latest        # the fresh Linux machine GitHub lends you
+    steps:                        # run top to bottom; the first failure stops the job
+      - uses: actions/checkout@v6         # copy your repo onto that machine
+      - uses: astral-sh/setup-uv@v8.1.0   # install uv, at an exact pinned version
+      - run: uv sync --locked             # [2] install from uv.lock; FAIL if the lock is out of date
+      - run: uv run ruff check .          # lint
+      - run: uv run ruff format --diff .  # [3] only REPORT bad formatting, don't rewrite files
+      - run: uv run pytest                       # [4] run the tests
