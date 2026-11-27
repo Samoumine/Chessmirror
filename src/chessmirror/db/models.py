@@ -45,7 +45,9 @@ class Game(Base):
 class HttpCache(Base):
     __tablename__ = "http_cache"
 
-    url: Mapped[str] = mapped_column(primary_key=True)  # nothing points here, so URL is the key
+    url: Mapped[str] = mapped_column(
+        primary_key=True
+    )  # nothing points here, so URL is the key
     etag: Mapped[str]
     data: Mapped[dict] = mapped_column(JSONB)
     updated_at: Mapped[datetime] = mapped_column(
