@@ -1,0 +1,20 @@
+services:
+  db:
+    image: pgvector/pgvector:pg17   # Postgres 17 with pgvector pre-installed (needed in v2)
+    restart: unless-stopped         # comes back after a crash or reboot
+    environment:
+      POSTGRES_USER: chessmirror
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}   # read from .env, never written in this file
+      POSTGRES_DB: chessmirror
+    ports:
+      - "127.0.0.1:5432:5432"       # reachable only from your own machine, not the network
+    volumes:
+      - pgdata:/var/lib/postgresql/data   # the data lives in the volume, not the container
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U chessmirror"]   # "are you ready for connections?"
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:
